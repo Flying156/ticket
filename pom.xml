@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.index12306</groupId>
-    <artifactId>12306</artifactId>
+    <groupId>org.opengoofy.index12306</groupId>
+    <artifactId>index12306-all</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -24,6 +24,7 @@
 
     <modules>
         <module>dependencies</module>
+        <module>frameworks</module>
     </modules>
 
     <dependencies>
