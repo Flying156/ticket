@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.learn.index12306.framework.starter.cache.config.CacheAutoConfiguration
+org.learn.index12306.framework.starter.bases.config.ApplicationBaseAutoConfiguration
