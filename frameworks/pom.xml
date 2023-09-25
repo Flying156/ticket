@@ -20,6 +20,7 @@
         <module>distributedid</module>
         <module>web</module>
         <module>bizs</module>
+        <module>log</module>
     </modules>
 
     <properties>

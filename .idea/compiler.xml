@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="index12306-distributedid-spring-boot-starter" />
         <module name="index12306-database-spring-boot-starter" />
+        <module name="index12306-log-spring-boot-starter" />
         <module name="index12306-base-spring-boot-starter" />
         <module name="index12306-web-spring-boot-starter" />
         <module name="index12306-convention-spring-boot-starter" />
