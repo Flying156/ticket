@@ -1,4 +1,4 @@
-package org.learn.index12306.frameworks.starter.user.core;
+package org.learn.index12306.framework.starter.user.core;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 

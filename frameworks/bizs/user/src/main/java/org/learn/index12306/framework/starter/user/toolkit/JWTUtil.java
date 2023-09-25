@@ -1,13 +1,12 @@
-package org.learn.index12306.frameworks.starter.user.toolkit;
+package org.learn.index12306.framework.starter.user.toolkit;
 
 import com.alibaba.fastjson2.JSON;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.learn.index12306.frameworks.starter.user.core.UserInfoDTO;
+import org.learn.index12306.framework.starter.user.core.UserInfoDTO;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;

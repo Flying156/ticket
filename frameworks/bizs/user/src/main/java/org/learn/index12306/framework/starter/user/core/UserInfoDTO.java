@@ -1,4 +1,4 @@
-package org.learn.index12306.frameworks.starter.user.core;
+package org.learn.index12306.framework.starter.user.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
