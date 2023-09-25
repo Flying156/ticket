@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="index12306-distributedid-spring-boot-starter" />
+        <module name="index12306-database-spring-boot-starter" />
+        <module name="index12306-base-spring-boot-starter" />
+        <module name="index12306-web-spring-boot-starter" />
+        <module name="index12306-convention-spring-boot-starter" />
+        <module name="index12306-common-spring-boot-starter" />
+        <module name="index12306-cache-spring-boot-starter" />
+        <module name="index12306-user-spring-boot-starter" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="12306" target="17" />
+      <module name="base" target="17" />
+      <module name="convention" target="17" />
+      <module name="dependencies" target="17" />
+      <module name="frameworks" target="17" />
+      <module name="web" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="12306" options="" />
+      <module name="dependencies" options="-parameters" />
+    </option>
+  </component>
+</project>
