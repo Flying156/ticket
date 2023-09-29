@@ -18,7 +18,7 @@
 package org.learn.index12306.framework.statrer.cache.core;
 
 /**
- * 缓存为空
+ * 缓存查询结果为空
  *
  * @author Milk
  * @version 2023/9/19 19:37

@@ -25,6 +25,7 @@
     <modules>
         <module>dependencies</module>
         <module>frameworks</module>
+        <module>frameworks/designpattern</module>
     </modules>
 
     <dependencies>

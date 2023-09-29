@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.learn.index12306.framework.statrer.cache.config.CacheAutoConfiguration
+org.learn.index12306.framework.starter.designpattern.config.DesignPatternAutoConfiguration
