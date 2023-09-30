@@ -21,6 +21,8 @@
     <file url="file://$PROJECT_DIR$/frameworks/designpattern/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/frameworks/distributedid/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/frameworks/distributedid/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/frameworks/idempotent/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/frameworks/idempotent/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/frameworks/log/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/frameworks/log/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/frameworks/src/main/java" charset="UTF-8" />
