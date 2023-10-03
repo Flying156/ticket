@@ -35,7 +35,7 @@ public abstract class AbstractWorkIdChooseTemplate {
     /**
      * 是否使用{@link SystemClock} 获取当前时间戳
      */
-    @Value("${framework.distributed.id.snowflake.is-use-system-clock:false")
+    @Value("${framework.distributed.id.snowflake.is-use-system-clock:false}")
     private boolean isUseSystemClock;
 
 

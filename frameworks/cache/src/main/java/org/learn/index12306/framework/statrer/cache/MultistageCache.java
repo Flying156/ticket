@@ -15,21 +15,15 @@
  * limitations under the License.
  */
 
-package org.learn.index12306.framework.statrer.cache.core;
+package org.learn.index12306.framework.statrer.cache;
+
+import org.learn.index12306.framework.statrer.cache.Cache;
 
 /**
- * 缓存过滤
+ * 多级缓存
  *
  * @author Milk
- * @version 2023/9/26 17:09
+ * @version 2023/9/27 13:12
  */
-public interface CacheGetFilter<T> {
-
-    /**
-     * 缓存过滤
-     *
-     * @param param 输出参数
-     * @return {@code true} 如果输入参数匹配，否则 {@link Boolean#TRUE}
-     */
-    boolean filter(T param);
+public interface MultistageCache extends Cache {
 }

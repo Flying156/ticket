@@ -30,6 +30,10 @@
     <file url="file://$PROJECT_DIR$/frameworks/web/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/frameworks/web/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/index12306-dependencies/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/user-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/user-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

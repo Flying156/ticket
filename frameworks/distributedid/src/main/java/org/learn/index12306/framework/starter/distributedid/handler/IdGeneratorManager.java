@@ -17,7 +17,7 @@
 
 package org.learn.index12306.framework.starter.distributedid.handler;
 
-import com.sun.istack.NotNull;
+import lombok.NonNull;
 import org.learn.index12306.framework.starter.distributedid.core.IdGenerator;
 import org.learn.index12306.framework.starter.distributedid.core.serviceid.DefaultServiceIdGenerator;
 import org.learn.index12306.framework.starter.distributedid.core.serviceid.ServiceIdGenerator;
@@ -49,7 +49,7 @@ public final class IdGeneratorManager {
     /**
      * 注册 ID 生成器
      */
-    public static void registerIdGenerator(@NotNull String resource, @NotNull IdGenerator idGenerator){
+    public static void registerIdGenerator(@NonNull String resource, @NonNull IdGenerator idGenerator){
         IdGenerator actual =MANAGER.get(resource);
         if(actual != null){
             return;
@@ -61,7 +61,7 @@ public final class IdGeneratorManager {
     /**
      * 根据 {@param resource} 获取 ID 生成器
      */
-    public static ServiceIdGenerator getIdGenerator(@NotNull String resource){
+    public static ServiceIdGenerator getIdGenerator(@NonNull String resource){
         return Optional.ofNullable(MANAGER.get(resource)).map(each -> (ServiceIdGenerator) each).orElse(null);
     }
 
