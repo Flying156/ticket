@@ -14,6 +14,7 @@
     <modules>
         <module>user-service</module>
         <module>gateway-service</module>
+        <module>ticket-service</module>
     </modules>
 
     <properties>

@@ -15,6 +15,7 @@
         <module name="index12306-common-spring-boot-starter" />
         <module name="index12306-designpattern-spring-boot-starter" />
         <module name="index12306-database-spring-boot-starter" />
+        <module name="index12306-ticket-service" />
         <module name="index12306-idempotent-spring-boot-starter" />
         <module name="index12306-web-spring-boot-starter" />
         <module name="index12306-user-spring-boot-starter" />
