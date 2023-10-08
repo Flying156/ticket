@@ -59,6 +59,12 @@
 
         <dependency>
             <groupId>org.learn.index12306</groupId>
+            <artifactId>index12306-idempotent-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.learn.index12306</groupId>
             <artifactId>index12306-convention-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>

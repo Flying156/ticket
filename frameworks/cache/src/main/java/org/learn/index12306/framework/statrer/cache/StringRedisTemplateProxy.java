@@ -141,7 +141,7 @@ public class StringRedisTemplateProxy implements DistributedCache {
             || Optional.ofNullable(bloomFilter).map(each -> !each.contains(key)).orElse(false)){
             return result;
         }
-
+        // 在多线程下，设置分布式锁，使一个进程获取锁，防止多个请求直接访问导致缓存穿透，同时避免系统资源浪费
         RLock lock = redissonClient.getLock(SAFE_GET_DISTRIBUTED_LOCK_KEY_PREFIX + key);
         lock.lock();
         try{

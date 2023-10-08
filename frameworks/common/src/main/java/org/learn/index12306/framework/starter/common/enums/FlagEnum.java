@@ -34,17 +34,16 @@ public enum FlagEnum {
         this.flag = flag;
     }
 
-    public Integer getFlag(){
+    public Integer code() {
         return this.flag;
     }
 
-    public String strFlag(){
-        return String.valueOf(flag);
+    public String strCode() {
+        return String.valueOf(this.flag);
     }
-
 
     @Override
     public String toString() {
-        return this.strFlag();
+        return strCode();
     }
 }
