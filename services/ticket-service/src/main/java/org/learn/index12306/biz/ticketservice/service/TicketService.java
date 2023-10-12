@@ -18,4 +18,13 @@ public interface TicketService {
      * @return 查询车票返回结果
      */
     TicketPageQueryRespDTO pageListTicketQueryV1(TicketPageQueryReqDTO requestParam);
+
+    /**
+     * 按照条件分页查询车票 V2
+     *
+     * @param requestParam 分页查询车票请求参数
+     * @return 查询车票返回结果
+     */
+    TicketPageQueryRespDTO pageListTicketQueryV2(TicketPageQueryReqDTO requestParam);
+
 }

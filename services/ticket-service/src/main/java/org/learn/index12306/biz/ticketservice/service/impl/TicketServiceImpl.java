@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
+import org.learn.index12306.biz.ticketservice.common.enums.VehicleSeatTypeEnum;
+import org.learn.index12306.biz.ticketservice.common.enums.VehicleTypeEnum;
 import org.learn.index12306.biz.ticketservice.dao.entity.*;
 import org.learn.index12306.biz.ticketservice.dao.mapper.*;
 import org.learn.index12306.biz.ticketservice.dto.domain.SeatClassDTO;
@@ -23,6 +25,8 @@ import org.learn.index12306.framework.statrer.cache.DistributedCache;
 import org.learn.index12306.framework.statrer.cache.toolkit.CacheUtil;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +64,12 @@ public class TicketServiceImpl implements TicketService {
     private final DistributedCache distributedCache;
     private final RedissonClient redissonClient;
     private final AbstractChainContext<TicketPageQueryReqDTO> chainContext;
+
+
+    @Value("${ticket.availability.cache-update.type:}")
+    private String ticketAvailabilityCacheUpdateType;
+    @Value("${framework.cache.redis.prefix:}")
+    private String cacheRedisPrefix;
 
 
     /**
@@ -149,7 +159,7 @@ public class TicketServiceImpl implements TicketService {
                 lock.unlock();
             }
         }
-
+        // 获取座位集合
         seatResults = CollUtil.isEmpty(seatResults)
                 ? regionTrainStationAllMap.values().stream().map(each -> JSON.parseObject(each.toString(), TicketListDTO.class)).collect(Collectors.toList())
                 : seatResults;
@@ -185,7 +195,8 @@ public class TicketServiceImpl implements TicketService {
                         .orElseGet(() ->{
                             // 如果缓存中没有就从数据库加载
                             Map<String, String> seatMarginMap = seatMarginCacheLoader.load(String.valueOf(each.getTrainId()),seatType, item.getDeparture(), item.getArrival());
-                            return Optional.ofNullable(String.valueOf(seatMarginMap.get(seatType))).map(Integer::parseInt).orElse(0);
+                            return Optional.ofNullable(seatMarginMap.get(String.valueOf(item.getSeatType()))).map(Integer::parseInt).orElse(0);
+
                         });
                 seatClassList.add(new SeatClassDTO(item.getSeatType(), quantity, new BigDecimal(item.getPrice()).divide(new BigDecimal(100), 1, RoundingMode.HALF_UP) , false));
             });
@@ -199,6 +210,87 @@ public class TicketServiceImpl implements TicketService {
                 .arrivalStationList(buildArrivalStationList(seatResults))
                 .trainBrandList(buildTrainBrandList(seatResults))
                 .seatClassTypeList(buildSeatClassList(seatResults))
+                .build();
+    }
+
+
+    /**
+     * 相比V1版本的区别是通过其他手段在空闲的时候查询数据库并
+     * 更新缓存，避免查询时频繁连接redis导致的性能瓶颈
+     */
+    @Override
+    public TicketPageQueryRespDTO pageListTicketQueryV2(TicketPageQueryReqDTO requestParam) {
+        // 责任链模式过滤请求参数
+        chainContext.handler(TRAIN_QUERY_TICKET_FILTER.name(), requestParam);
+        StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
+        List<Object> stationDetails = stringRedisTemplate.opsForHash()
+                .multiGet(REGION_TRAIN_STATION_MAPPING, Lists.newArrayList(requestParam.getFromStation(), requestParam.getToStation()));
+        // 构建 key,从缓存中查询 起始站--> 出发站 的所有列车信息
+        String buildRegionTrainStationHashKey = String.format(REGION_TRAIN_STATION, stationDetails.get(0), stationDetails.get(1));
+        Map<Object, Object> regionTrainStationAllMap = stringRedisTemplate.opsForHash().entries(buildRegionTrainStationHashKey);
+        // 获取线路的各种信息,不包含座位的各种信息
+        List<TicketListDTO> seatResults = regionTrainStationAllMap.values().stream()
+                .map(each -> JSON.parseObject(each.toString(), TicketListDTO.class))
+                .sorted(new TimeStringComparator())
+                .toList();
+
+        List<String> trainStationPriceKeys = seatResults.stream()
+                .map(each -> String.format( TRAIN_STATION_PRICE, each.getTrainId(), each.getDeparture(), each.getArrival()))
+                .toList();
+
+        List<Object> trainStationPriceObjs = stringRedisTemplate.executePipelined((RedisCallback<String>) connection -> {
+            trainStationPriceKeys.forEach(each -> connection.stringCommands().get(each.getBytes()));
+            return null;
+        });
+
+
+        List<TrainStationPriceDO> trainStationPriceDOList = new ArrayList<>();
+        List<String> trainStationRemainingKeyList = new ArrayList<>();
+        for(Object each : trainStationPriceObjs){
+            List<TrainStationPriceDO> trainStationPriceList = JSON.parseArray(each.toString(), TrainStationPriceDO.class);
+            trainStationPriceDOList.addAll(trainStationPriceList);
+            for(TrainStationPriceDO item : trainStationPriceList){
+                String trainStationRemainingKey =  TRAIN_STATION_REMAINING_TICKET + StrUtil.join("_",item.getTrainId(), item.getDeparture(), item.getArrival());
+                trainStationRemainingKeyList.add(trainStationRemainingKey);
+            }
+        }
+        // 获取各种座位剩余数量
+        List<Object> trainStationRemainingObjs = stringRedisTemplate.executePipelined((RedisCallback<String>)connection ->{
+            for(int i = 0; i < trainStationRemainingKeyList.size(); i++){
+                connection.hashCommands().hGet(trainStationRemainingKeyList.get(i).getBytes(), trainStationPriceDOList.get(i).getSeatType().toString().getBytes());
+            }
+            return null;
+        });
+
+
+        for(TicketListDTO each : seatResults){
+            List<Integer> seatTypesByCode = VehicleTypeEnum.findSeatTypesByCode(each.getTrainType());
+            List<Object> remainingTicket = new ArrayList<>(trainStationRemainingObjs.subList(0, seatTypesByCode.size()));
+            List<TrainStationPriceDO> trainStationPriceDOSub = new ArrayList<>(trainStationPriceDOList.subList(0, seatTypesByCode.size()));
+            trainStationRemainingObjs.subList(0, seatTypesByCode.size()).clear();
+            trainStationPriceDOList.subList(0, seatTypesByCode.size()).clear();
+            List<SeatClassDTO> seatClassDTOList = new ArrayList<>();
+
+            for (int i = 0; i < trainStationPriceDOSub.size(); i++) {
+                TrainStationPriceDO trainStationPriceDO = trainStationPriceDOSub.get(i);
+                SeatClassDTO seatClassDTO = SeatClassDTO.builder()
+                        .type(trainStationPriceDO.getSeatType())
+                        .price(new BigDecimal(trainStationPriceDO.getPrice()).divide(new BigDecimal("100"), 1, RoundingMode.HALF_UP))
+                        .quantity(Integer.parseInt(remainingTicket.get(i).toString()))
+                        .candidate(false)
+                        .build();
+                seatClassDTOList.add(seatClassDTO);
+            }
+            each.setSeatClassList(seatClassDTOList);
+        }
+
+
+        return TicketPageQueryRespDTO.builder()
+                .trainList(seatResults)
+                .departureStationList(buildDepartureStationList(seatResults))
+                .arrivalStationList(buildArrivalStationList(seatResults))
+                .seatClassTypeList(buildSeatClassList(seatResults))
+
                 .build();
     }
 
