@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class TrainTicketQueryParamNotNullChainHandler implements TrainTicketQueryChainFilter<TicketPageQueryReqDTO>{
+public class TrainTicketQueryParamNotNullChainFilter implements TrainTicketQueryChainFilter<TicketPageQueryReqDTO>{
 
     @Override
     public void handler(TicketPageQueryReqDTO requestParam) {

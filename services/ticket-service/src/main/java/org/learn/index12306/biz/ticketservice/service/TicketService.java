@@ -1,7 +1,9 @@
 package org.learn.index12306.biz.ticketservice.service;
 
+import org.learn.index12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
 import org.learn.index12306.biz.ticketservice.dto.req.TicketPageQueryReqDTO;
 import org.learn.index12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
+import org.learn.index12306.biz.ticketservice.dto.resp.TicketPurchaseRespDTO;
 
 /**
  * 车票接口层
@@ -27,4 +29,11 @@ public interface TicketService {
      */
     TicketPageQueryRespDTO pageListTicketQueryV2(TicketPageQueryReqDTO requestParam);
 
+    /**
+     * 购买车票
+     *
+     * @param requestParam 购买车票请求阐述
+     * @return 购买车票返回结果
+     */
+    TicketPurchaseRespDTO purchaseTicketsV1(PurchaseTicketReqDTO requestParam);
 }

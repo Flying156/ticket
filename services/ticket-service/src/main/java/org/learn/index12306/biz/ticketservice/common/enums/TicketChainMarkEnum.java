@@ -11,6 +11,11 @@ public enum TicketChainMarkEnum {
     /**
      * 车票查询过滤器
      */
-    TRAIN_QUERY_TICKET_FILTER;
+    TRAIN_QUERY_TICKET_FILTER,
+
+    /**
+     * 车票购买过滤器
+     */
+    TRAIN_PURCHASE_TICKET_FILTER;
 
 }

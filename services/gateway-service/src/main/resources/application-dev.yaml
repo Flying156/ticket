@@ -14,3 +14,14 @@ spring:
                   - /api/user-service/query
                   - /api/user-service/logout
                   - /api/user-service/deletion
+        - id: index12306-ticket-service
+          uri: lb://index12306-ticket${unique-name:}-service/api/user-service/**
+          predicates:
+            - Path=/api/ticket-service/**
+          filters:
+            - name: TokenValidate
+              args:
+                blackPathPre:
+                  - /api/ticket-service/ticket/purchase
+                  - /api/ticket-service/ticket/pay/query
+                  - /api/ticket-service/ticket/cancel

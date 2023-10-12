@@ -15,8 +15,10 @@ import org.learn.index12306.biz.ticketservice.dao.entity.*;
 import org.learn.index12306.biz.ticketservice.dao.mapper.*;
 import org.learn.index12306.biz.ticketservice.dto.domain.SeatClassDTO;
 import org.learn.index12306.biz.ticketservice.dto.domain.TicketListDTO;
+import org.learn.index12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
 import org.learn.index12306.biz.ticketservice.dto.req.TicketPageQueryReqDTO;
 import org.learn.index12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
+import org.learn.index12306.biz.ticketservice.dto.resp.TicketPurchaseRespDTO;
 import org.learn.index12306.biz.ticketservice.service.TicketService;
 import org.learn.index12306.biz.ticketservice.service.cache.SeatMarginCacheLoader;
 import org.learn.index12306.biz.ticketservice.toolkit.TimeStringComparator;
@@ -292,6 +294,12 @@ public class TicketServiceImpl implements TicketService {
                 .seatClassTypeList(buildSeatClassList(seatResults))
 
                 .build();
+    }
+
+
+    @Override
+    public TicketPurchaseRespDTO purchaseTicketsV1(PurchaseTicketReqDTO requestParam) {
+        return null;
     }
 
     /**
