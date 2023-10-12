@@ -1,11 +1,9 @@
 package org.learn.index12306.biz.ticketservice.common.enums;
 
 import cn.hutool.core.collection.ListUtil;
-import kotlin.collections.EmptyList;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
