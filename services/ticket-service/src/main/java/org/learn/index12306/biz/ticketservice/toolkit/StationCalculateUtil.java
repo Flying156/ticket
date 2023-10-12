@@ -29,7 +29,7 @@ public final class StationCalculateUtil {
             return routesToDeduct;
         }
         for(int i = startIndex; i < endIndex; i++){
-            for(int j = i + 1; j < endIndex; j++){
+            for(int j = i + 1; j <= endIndex; j++){
                 routesToDeduct.add(new RouteDTO(stations.get(i), stations.get(j)));
             }
         }

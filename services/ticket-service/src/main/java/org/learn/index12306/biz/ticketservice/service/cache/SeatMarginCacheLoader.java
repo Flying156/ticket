@@ -53,13 +53,11 @@ public class SeatMarginCacheLoader {
      * @return  该班次的各种座位类型的剩余数量
      */
     public Map<String, String> load(String trainId, String seatType, String departure, String arrival){
-
         Map<String, Map<String, String>> trainStationRemainingTicketMaps = new LinkedHashMap<>();
         String keySuffix = CacheUtil.buildKey(trainId, departure, arrival);
-
-        RLock lock = redissonClient.getLock(String.format(LOCK_SAFE_LOAD_SEAT_MARGIN_GET, trainId));
+        RLock lock = redissonClient.getLock(String.format(LOCK_SAFE_LOAD_SEAT_MARGIN_GET, keySuffix));
         lock.lock();
-        try{
+        try {
             StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
             Object quantityObj = stringRedisTemplate.opsForHash().get(TRAIN_STATION_REMAINING_TICKET + keySuffix, seatType);
             if(CacheUtil.isNullOrBlank(quantityObj)){

@@ -22,7 +22,7 @@ public class TrainTicketQueryParamNotNullChainHandler implements TrainTicketQuer
             if(StrUtil.isBlank(requestParam.getFromStation())){
                 throw new ClientException("出发地不能为空");
             }
-            if(StrUtil.isBlank(requestParam.getArrival())){
+            if(StrUtil.isBlank(requestParam.getToStation())){
                 throw new ClientException("目的地不能为空");
             }
             if (requestParam.getDepartureDate() == null) {
