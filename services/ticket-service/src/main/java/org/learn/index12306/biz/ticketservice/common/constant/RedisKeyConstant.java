@@ -44,6 +44,12 @@ public final class RedisKeyConstant {
      */
     public static final String TRAIN_STATION_REMAINING_TICKET = "index12306-ticket-service:train_station_remaining_ticket:";
 
+
+    /**
+     * 车厢余票查询，Key Prefix + 列车ID_起始站点_终点
+     */
+    public static final String TRAIN_STATION_CARRIAGE_REMAINING_TICKET = "index12306-ticket-service:train_station_carriage_remaining_ticket:";
+
     /**
      * 地区以及车站查询，Key Prefix + ( 车站名称 or 查询方式 )
      */
@@ -53,6 +59,11 @@ public final class RedisKeyConstant {
      * 列车路线信息查询，Key Prefix + 列车ID
      */
     public static final String TRAIN_STATION_STOPOVER_DETAIL = "index12306-ticket-service:train_station_stopover_detail:";
+
+    /**
+     * 用户购票分布式锁 Key
+     */
+    public static final String LOCK_PURCHASE_TICKETS = "${unique-name:}index12306-ticket-service:lock:purchase_tickets_%s";
 
     /**
      * 列车站点缓存

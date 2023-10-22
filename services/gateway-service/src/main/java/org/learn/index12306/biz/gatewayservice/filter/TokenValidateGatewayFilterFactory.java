@@ -1,9 +1,9 @@
 package org.learn.index12306.biz.gatewayservice.filter;
 
 import org.learn.index12306.biz.gatewayservice.config.Config;
+import org.learn.index12306.biz.gatewayservice.toolkit.JWTUtil;
+import org.learn.index12306.biz.gatewayservice.toolkit.UserInfoDTO;
 import org.learn.index12306.framework.starter.bases.constant.UserConstant;
-import org.learn.index12306.framework.starter.user.core.UserInfoDTO;
-import org.learn.index12306.framework.starter.user.toolkit.JWTUtil;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;

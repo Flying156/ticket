@@ -1,7 +1,10 @@
 package org.learn.index12306.biz.ticketservice.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.learn.index12306.framework.starter.database.base.BaseDO;
 
 /**
@@ -11,6 +14,9 @@ import org.learn.index12306.framework.starter.database.base.BaseDO;
  * @version 2023/10/7 14:04
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("t_seat")
 public class SeatDO extends BaseDO {
 

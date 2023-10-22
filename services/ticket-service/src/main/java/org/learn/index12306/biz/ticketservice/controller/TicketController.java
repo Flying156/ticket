@@ -52,7 +52,7 @@ public class TicketController {
             type = IdempotentTypeEnum.SPEL
     )
     @PostMapping("/api/ticket-service/ticket/purchase")
-    public Result<TicketPurchaseRespDTO> purchaseTickets(@ResponseBody PurchaseTicketReqDTO requestParam){
+    public Result<TicketPurchaseRespDTO> purchaseTickets( PurchaseTicketReqDTO requestParam){
         return Results.success(ticketService.purchaseTicketsV1(requestParam));
     }
 

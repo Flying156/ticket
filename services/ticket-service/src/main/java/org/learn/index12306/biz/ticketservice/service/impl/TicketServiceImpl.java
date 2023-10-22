@@ -7,8 +7,10 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
+import org.learn.index12306.biz.ticketservice.common.enums.TicketStatusEnum;
 import org.learn.index12306.biz.ticketservice.common.enums.VehicleSeatTypeEnum;
 import org.learn.index12306.biz.ticketservice.common.enums.VehicleTypeEnum;
 import org.learn.index12306.biz.ticketservice.dao.entity.*;
@@ -17,20 +19,27 @@ import org.learn.index12306.biz.ticketservice.dto.domain.SeatClassDTO;
 import org.learn.index12306.biz.ticketservice.dto.domain.TicketListDTO;
 import org.learn.index12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
 import org.learn.index12306.biz.ticketservice.dto.req.TicketPageQueryReqDTO;
+import org.learn.index12306.biz.ticketservice.dto.resp.TicketOrderDetailRespDTO;
 import org.learn.index12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
 import org.learn.index12306.biz.ticketservice.dto.resp.TicketPurchaseRespDTO;
 import org.learn.index12306.biz.ticketservice.service.TicketService;
 import org.learn.index12306.biz.ticketservice.service.cache.SeatMarginCacheLoader;
+import org.learn.index12306.biz.ticketservice.service.handler.ticket.dto.TrainPurchaseTicketRespDTO;
+import org.learn.index12306.biz.ticketservice.service.handler.ticket.select.TrainSeatTypeSelector;
 import org.learn.index12306.biz.ticketservice.toolkit.TimeStringComparator;
+import org.learn.index12306.framework.starter.convention.result.Result;
 import org.learn.index12306.framework.starter.designpattern.chain.AbstractChainContext;
+import org.learn.index12306.framework.starter.user.core.UserContext;
 import org.learn.index12306.framework.statrer.cache.DistributedCache;
 import org.learn.index12306.framework.statrer.cache.toolkit.CacheUtil;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -40,6 +49,7 @@ import java.util.stream.Collectors;
 
 import static org.learn.index12306.biz.ticketservice.common.constant.Index12306Constant.ADVANCE_TICKET_DAY;
 import static org.learn.index12306.biz.ticketservice.common.constant.RedisKeyConstant.*;
+import static org.learn.index12306.biz.ticketservice.common.enums.TicketChainMarkEnum.TRAIN_PURCHASE_TICKET_FILTER;
 import static org.learn.index12306.biz.ticketservice.common.enums.TicketChainMarkEnum.TRAIN_QUERY_TICKET_FILTER;
 import static org.learn.index12306.biz.ticketservice.toolkit.DateUtil.calculateHourDifference;
 import static org.learn.index12306.biz.ticketservice.toolkit.DateUtil.convertDateToLocalTime;
@@ -52,9 +62,8 @@ import static org.learn.index12306.biz.ticketservice.toolkit.DateUtil.convertDat
  */
 @Service
 @RequiredArgsConstructor
-public class TicketServiceImpl implements TicketService {
+public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> implements TicketService {
 
-    private final TicketMapper ticketMapper;
     private final SeatMapper seatMapper;
     private final CarriageMapper carriageMapper;
     private final TrainMapper trainMapper;
@@ -62,10 +71,16 @@ public class TicketServiceImpl implements TicketService {
     private final RegionMapper regionMapper;
     private final TrainStationPriceMapper trainStationPriceMapper;
     private final TrainStationRelationMapper trainStationRelationMapper;
+    private final TrainSeatTypeSelector trainSeatTypeSelector;
     private final SeatMarginCacheLoader seatMarginCacheLoader;
     private final DistributedCache distributedCache;
     private final RedissonClient redissonClient;
-    private final AbstractChainContext<TicketPageQueryReqDTO> chainContext;
+    private final AbstractChainContext<TicketPageQueryReqDTO> ticketPageQueryAbstractChainContext;
+    private final AbstractChainContext<PurchaseTicketReqDTO> ticketPurchaseAbstractChainContext;
+    private final ConfigurableEnvironment environment;
+    private TicketService ticketService;
+
+
 
 
     @Value("${ticket.availability.cache-update.type:}")
@@ -82,7 +97,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public TicketPageQueryRespDTO pageListTicketQueryV1(TicketPageQueryReqDTO requestParam) {
         // 责任链模式验证城市名称是否存在，出发日期不能小于当前日期
-        chainContext.handler(TRAIN_QUERY_TICKET_FILTER.name(), requestParam);
+        ticketPageQueryAbstractChainContext.handler(TRAIN_QUERY_TICKET_FILTER.name(), requestParam);
         StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
         // 通过映射获取出发站和到达站的名称
         List<Object> stationDetails = stringRedisTemplate.opsForHash()
@@ -223,7 +238,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public TicketPageQueryRespDTO pageListTicketQueryV2(TicketPageQueryReqDTO requestParam) {
         // 责任链模式过滤请求参数
-        chainContext.handler(TRAIN_QUERY_TICKET_FILTER.name(), requestParam);
+        ticketPageQueryAbstractChainContext.handler(TRAIN_QUERY_TICKET_FILTER.name(), requestParam);
         StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
         List<Object> stationDetails = stringRedisTemplate.opsForHash()
                 .multiGet(REGION_TRAIN_STATION_MAPPING, Lists.newArrayList(requestParam.getFromStation(), requestParam.getToStation()));
@@ -299,6 +314,47 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketPurchaseRespDTO purchaseTicketsV1(PurchaseTicketReqDTO requestParam) {
+        // 责任链过滤： 1.参数不能为空 2.车次存在 3.余票充足
+        ticketPurchaseAbstractChainContext.handler(TRAIN_PURCHASE_TICKET_FILTER.name(), requestParam);
+        // 按机器获取
+        String lockKey = environment.resolvePlaceholders(String.format(LOCK_PURCHASE_TICKETS, requestParam.getTrainId()));
+        // 当多个线程去争抢锁时，会导致系统崩溃，我们要控制线程的数量，这是 V2 版本比现版本的优势
+        RLock lock = redissonClient.getLock(lockKey);
+        lock.lock();
+        try{
+            return ticketService.executePurchaseTickets(requestParam);
+
+        }finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public TicketPurchaseRespDTO executePurchaseTickets(PurchaseTicketReqDTO requestParam) {
+        List<TicketOrderDetailRespDTO> ticketOrderDetailResults = new ArrayList<>();
+        String trainId = requestParam.getTrainId();
+        TrainDO trainDO = distributedCache.safeGet(
+                TRAIN_INFO + trainId,
+                TrainDO.class,
+                () -> trainMapper.selectById(trainId),
+                ADVANCE_TICKET_DAY,
+                TimeUnit.DAYS
+        );
+        List<TrainPurchaseTicketRespDTO> trainPurchaseTicketResults = trainSeatTypeSelector.select(trainDO.getTrainType(), requestParam);
+        List<TicketDO> ticketDOList = trainPurchaseTicketResults.stream()
+                .map(each -> TicketDO.builder()
+                        .username(UserContext.getUsername())
+                        .trainId(Long.parseLong(requestParam.getTrainId()))
+                        .carriageNumber(each.getCarriageNumber())
+                        .seatNumber(each.getSeatNumber())
+                        .passengerId(each.getPassengerId())
+                        .ticketStatus(TicketStatusEnum.UNPAID.getCode())
+                        .build())
+                .toList();
+        saveBatch(ticketDOList);
+        Result<String> ticketOrderResult;
+
         return null;
     }
 

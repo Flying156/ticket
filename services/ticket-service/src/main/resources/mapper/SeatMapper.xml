@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.learn.index12306.biz.ticketservice.dao.mapper.SeatMapper">
+
+    <select id="listSeatRemainingTicket" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS count
+        FROM t_seat
+        WHERE train_id = #{seatDO.trainId}
+        AND start_station = #{seatDO.startStation}
+        AND end_station = #{seatDO.endStation}
+        AND seat_status = '0'
+        AND carriage_number IN
+        <foreach collection="trainCarriageList" item="carriage" open="(" close=")" separator=",">
+            #{carriage}
+        </foreach>
+        GROUP BY carriage_number
+    </select>
+</mapper>

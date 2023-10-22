@@ -13,6 +13,7 @@
         <module name="index12306-base-spring-boot-starter" />
         <module name="index12306-convention-spring-boot-starter" />
         <module name="index12306-common-spring-boot-starter" />
+        <module name="index12306-order-service" />
         <module name="index12306-designpattern-spring-boot-starter" />
         <module name="index12306-database-spring-boot-starter" />
         <module name="index12306-ticket-service" />
@@ -30,6 +31,9 @@
       <module name="desginpattern" target="17" />
       <module name="frameworks" target="17" />
       <module name="index12306-desginpattern-spring-boot-starter" target="17" />
+      <module name="index12306-ticket-service (1)" target="17" />
+      <module name="index12306-ticket-service (2)" target="17" />
+      <module name="order-service" target="17" />
       <module name="web" target="17" />
     </bytecodeTargetLevel>
   </component>
