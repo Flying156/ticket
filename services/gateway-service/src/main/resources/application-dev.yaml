@@ -25,3 +25,14 @@ spring:
                   - /api/ticket-service/ticket/purchase
                   - /api/ticket-service/ticket/pay/query
                   - /api/ticket-service/ticket/cancel
+        - id: index12306-order-service
+          uri: lib://index12306-order${unique-name:}-service/api/order-service/**
+          predicates:
+            - Path=/api/order-service/**
+          filters:
+            - name: TokenValidate
+              args:
+                blackPathPre:
+                  - /api/order-service/order/ticket/query
+                  - /api/order-service/order/ticket/page
+                  - /api/order-service/order/ticket/self/page

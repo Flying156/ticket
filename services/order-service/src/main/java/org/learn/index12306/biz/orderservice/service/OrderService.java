@@ -2,6 +2,7 @@ package org.learn.index12306.biz.orderservice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.learn.index12306.biz.orderservice.dao.entity.OrderDO;
+import org.learn.index12306.biz.orderservice.dto.req.TicketOrderCreateReqDTO;
 import org.learn.index12306.biz.orderservice.dto.req.TicketOrderPageQueryReqDTO;
 import org.learn.index12306.biz.orderservice.dto.req.TicketOrderSelfPageQueryReqDTO;
 import org.learn.index12306.biz.orderservice.dto.resp.TicketOrderDetailRespDTO;
@@ -39,4 +40,12 @@ public interface OrderService extends IService<OrderDO> {
      * @return 订单分页详情
      */
     PageResponse<TicketOrderDetailSelfRespDTO> pageSelfTicketOrder(TicketOrderSelfPageQueryReqDTO requestParam);
+
+    /**
+     * 创建订单
+     *
+     * @param requestParam 订单创建参数
+     * @return 订单号
+     */
+    String createTicketOrder(TicketOrderCreateReqDTO requestParam);
 }

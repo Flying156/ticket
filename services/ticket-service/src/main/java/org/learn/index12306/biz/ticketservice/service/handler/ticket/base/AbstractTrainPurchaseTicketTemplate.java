@@ -38,8 +38,8 @@ public abstract class AbstractTrainPurchaseTicketTemplate implements IPurchaseTi
                 .trainId(requestParam.getRequestParam().getTrainId())
                 .departure(requestParam.getRequestParam().getDeparture())
                 .arrival(requestParam.getRequestParam().getArrival())
-                .passengerSeatDetails(requestParam.getPassengerSeatDetails())
                 .chooseSeatList(requestParam.getRequestParam().getChooseSeats())
+                .passengerSeatDetails(requestParam.getPassengerSeatDetails())
                 .build();
     }
 
@@ -54,18 +54,17 @@ public abstract class AbstractTrainPurchaseTicketTemplate implements IPurchaseTi
     @Override
     public List<TrainPurchaseTicketRespDTO> executeResp(SelectSeatDTO requestParam) {
         List<TrainPurchaseTicketRespDTO> actualResult = selectSeats(requestParam);
-        // 扣减车厢缓存，扣减站点余票缓存
-        if(CollUtil.isNotEmpty(actualResult) && !StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")){
+        // 扣减车厢余票缓存，扣减站点余票缓存
+        if (CollUtil.isNotEmpty(actualResult) && !StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
             String trainId = requestParam.getRequestParam().getTrainId();
             String departure = requestParam.getRequestParam().getDeparture();
             String arrival = requestParam.getRequestParam().getArrival();
             StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
-            List<RouteDTO> routeDTOList = trainStationService.listTrainStationRoute(trainId, departure, arrival);
-            routeDTOList.forEach(each ->{
-                String keySuffix = CacheUtil.buildKey("_", trainId, each.getStartStation(), each.getEndStation());
+            List<RouteDTO> routeDTOList = trainStationService.listTakeoutTrainStationRoute(trainId, departure, arrival);
+            routeDTOList.forEach(each -> {
+                String keySuffix = StrUtil.join("_", trainId, each.getStartStation(), each.getEndStation());
                 stringRedisTemplate.opsForHash().increment(TRAIN_STATION_REMAINING_TICKET + keySuffix, String.valueOf(requestParam.getSeatType()), -actualResult.size());
             });
-
         }
         return actualResult;
     }

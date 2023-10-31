@@ -12,10 +12,7 @@ import org.learn.index12306.framework.starter.idempotent.enums.IdempotentSceneEn
 import org.learn.index12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
 import org.learn.index12306.framework.starter.log.annotation.ILog;
 import org.learn.index12306.framework.starter.web.Results;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 车票控制层
@@ -46,14 +43,29 @@ public class TicketController {
             uniqueKeyPrefix = "index12306-ticket:lock_purchase-tickets:",
             key = "T(org.learn.index12306.framework.starter.bases.ApplicationContextHolder).getBean('environment').getProperty('unique-name', '')"
                     + "+'_'+"
-                    + "T(org.learn.index12306.frameworks.starter.user.core.UserContext).getUsername()",
+                    + "T(org.learn.index12306.framework.starter.user.core.UserContext).getUsername()",
             message = "正在执行下单流程，请稍后...",
             scene = IdempotentSceneEnum.RESTAPI,
             type = IdempotentTypeEnum.SPEL
     )
-    @PostMapping("/api/ticket-service/ticket/purchase")
-    public Result<TicketPurchaseRespDTO> purchaseTickets( PurchaseTicketReqDTO requestParam){
+    public Result<TicketPurchaseRespDTO> purchaseTickets(@RequestBody PurchaseTicketReqDTO requestParam){
         return Results.success(ticketService.purchaseTicketsV1(requestParam));
+    }
+
+
+    @ILog
+    @Idempotent(
+            uniqueKeyPrefix = "index12306-ticket:lock_purchase-tickets:",
+            key = "T(org.learn.index12306.framework.starter.bases.ApplicationContextHolder).getBean('environment').getProperty('unique-name', '')"
+                    + "+'_'+"
+                    + "T(org.learn.index12306.framework.starter.user.core.UserContext).getUsername()",
+            message = "正在指向下单流程，请稍后...",
+            scene = IdempotentSceneEnum.RESTAPI,
+            type = IdempotentTypeEnum.SPEL
+    )
+    @PostMapping("/api/ticket-service/ticket/purchase/v2")
+    public Result<TicketPurchaseRespDTO> purchaseTicketsV2(@RequestBody PurchaseTicketReqDTO requestParam){
+        return Results.success(ticketService.purchaseTicketsV2(requestParam));
     }
 
 }

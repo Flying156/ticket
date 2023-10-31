@@ -96,7 +96,7 @@ public class TrainPurchaseTicketParamVerifyChainHandler implements TrainTicketPu
 
     private boolean validateStation(List<String> stationList, String startStation, String endStation){
         int index1 = stationList.indexOf(startStation);
-        int index2 = startStation.indexOf(endStation);
+        int index2 = stationList.indexOf(endStation);
         if(index2 == -1 || index1 == -1){
             return false;
         }

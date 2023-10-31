@@ -1,4 +1,4 @@
-package org.learn.index12306.biz.ticketservice.dto.resp;
+package org.learn.index12306.biz.ticketservice.remote.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,21 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 车票订单详情返回参数
- *
  * @author Milk
- * @version 2023/10/12 19:14
+ * @version 2023/10/25 16:42
  */
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketOrderDetailRespDTO {
-
-    /**
-     * 席别类型
-     */
-    private Integer seatType;
+@Builder
+public class TicketOrderItemCreateRemoteReqDTO {
 
     /**
      * 车厢号
@@ -33,6 +26,11 @@ public class TicketOrderDetailRespDTO {
     private String seatNumber;
 
     /**
+     * 座位类型
+     */
+    private Integer seatType;
+
+    /**
      * 真实姓名
      */
     private String realName;
@@ -43,17 +41,22 @@ public class TicketOrderDetailRespDTO {
     private Integer idType;
 
     /**
-     * 证件号
+     * 证件类型
      */
     private String idCard;
 
     /**
-     * 车票类型 0：成人 1：儿童 2：学生 3：残疾军人
+     * 手机号
      */
-    private Integer ticketType;
+    private String  phone;
 
     /**
      * 订单金额
      */
     private Integer amount;
+
+    /**
+     * 车票类型
+     */
+    private Integer ticketType;
 }

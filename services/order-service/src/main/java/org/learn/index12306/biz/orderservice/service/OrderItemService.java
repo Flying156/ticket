@@ -2,6 +2,7 @@ package org.learn.index12306.biz.orderservice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.learn.index12306.biz.orderservice.dao.entity.OrderItemDO;
+import org.learn.index12306.biz.orderservice.dto.req.TicketOrderCreateReqDTO;
 import org.learn.index12306.biz.orderservice.dto.req.TicketOrderItemQueryReqDTO;
 import org.learn.index12306.biz.orderservice.dto.resp.TicketOrderPassengerDetailRespDTO;
 
@@ -21,4 +22,6 @@ public interface OrderItemService extends IService<OrderItemDO> {
      * @param requestParam 请求参数
      */
     List<TicketOrderPassengerDetailRespDTO> queryTicketItemOrderById(TicketOrderItemQueryReqDTO requestParam);
+
+
 }

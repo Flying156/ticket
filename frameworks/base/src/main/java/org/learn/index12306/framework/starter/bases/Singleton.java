@@ -56,7 +56,7 @@ public final class Singleton {
         if (result == null && (result = supplier.get()) != null) {
             SINGLE_OBJECT_POOL.put(key, result);
         }
-        return result != null ? null : (T) result;
+        return result != null ?  (T) result : null;
     }
 
 

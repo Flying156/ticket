@@ -57,7 +57,7 @@ public final class TrainSeatTypeSelector {
         List<PurchaseTicketPassengerDetailDTO> passengerDetails = requestParam.getPassengers();
         Map<Integer, List<PurchaseTicketPassengerDetailDTO>> seatTypeMap = passengerDetails.stream()
                 .collect(Collectors.groupingBy(PurchaseTicketPassengerDetailDTO::getSeatType));
-        List<TrainPurchaseTicketRespDTO>actualResult = new CopyOnWriteArrayList<>();
+        List<TrainPurchaseTicketRespDTO> actualResult = new CopyOnWriteArrayList<>();
         // 如果选择的座位类型大于一，需要分次查找
         if(seatTypeMap.size() > 1){
             List<Future<List<TrainPurchaseTicketRespDTO>>> futureResult = new ArrayList<>();

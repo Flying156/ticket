@@ -60,7 +60,7 @@ public final class StationCalculateUtil {
         }
 
         for(int i = startIndex; i <= endIndex; i++){
-            for(int j = i + 1; j <= stations.size() && i < endIndex; j++){
+            for(int j = i + 1; j < stations.size() && i < endIndex; j++){
                 takeoutStationList.add(new RouteDTO(stations.get(i), stations.get(j)));
             }
         }

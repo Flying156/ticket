@@ -71,7 +71,6 @@ public class TrainBusinessClassPurchaseTicketHandler extends AbstractTrainPurcha
             }
             return selectComplexSeats(requestParam, trainCarriageList, trainStationCarriageRemainingTicket);
         }
-
     }
 
 

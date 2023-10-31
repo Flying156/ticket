@@ -3,17 +3,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.learn.index12306.biz.ticketservice.dao.mapper.SeatMapper">
 
-    <select id="listSeatRemainingTicket" resultType="java.lang.Integer">
-        SELECT COUNT(*) AS count
-        FROM t_seat
-        WHERE train_id = #{seatDO.trainId}
-        AND start_station = #{seatDO.startStation}
-        AND end_station = #{seatDO.endStation}
-        AND seat_status = '0'
-        AND carriage_number IN
-        <foreach collection="trainCarriageList" item="carriage" open="(" close=")" separator=",">
+    <select id="listSeatRemainingTicket" parameterType="org.learn.index12306.biz.ticketservice.dao.entity.SeatDO" resultType="Integer">
+        select count(*) as count
+        from t_seat
+        where train_id = #{seatDO.trainId}
+        and start_station = #{seatDO.startStation}
+        and end_station = #{seatDO.endStation}
+        and seat_status = '0'
+        and carriage_number in
+        <foreach collection="trainCarriageList" item="carriage" open="(" separator="," close=")">
             #{carriage}
         </foreach>
-        GROUP BY carriage_number
+        group by carriage_number
+    </select>
+
+    <select id="listSeatTypeCount" resultType="org.learn.index12306.biz.ticketservice.dto.domain.SeatTypeCountDTO">
+        select seat_type as seatType, count(*) as seatCount
+        from t_seat
+        where train_id = #{trainId}
+        and start_station = #{startStation}
+        and end_station = #{endStation}
+        and seat_status = '0'
+        and seat_type in 
+        <foreach collection="seatTypes" item="seatType" open="(" close=")" separator=",">
+            #{seatType}
+        </foreach>
+        group by seat_type 
+        having seatCount > 0
     </select>
 </mapper>

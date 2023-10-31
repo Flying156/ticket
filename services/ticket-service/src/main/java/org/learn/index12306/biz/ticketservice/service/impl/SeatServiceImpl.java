@@ -34,22 +34,22 @@ import static org.learn.index12306.biz.ticketservice.common.constant.RedisKeyCon
 @RequiredArgsConstructor
 public class SeatServiceImpl extends ServiceImpl<SeatMapper, SeatDO> implements SeatService {
 
+    private final SeatMapper seatMapper;
     private final DistributedCache distributedCache;
     private final TrainStationService trainStationService;
 
     @Override
-    public List<String> listUsableCarriageNumber(String trainId, Integer seatType, String departure, String arrival) {
-        LambdaQueryWrapper<SeatDO>queryWrapper = Wrappers.lambdaQuery(SeatDO.class)
+    public List<String> listUsableCarriageNumber(String trainId, Integer carriageType, String departure, String arrival) {
+        LambdaQueryWrapper<SeatDO> queryWrapper = Wrappers.lambdaQuery(SeatDO.class)
                 .eq(SeatDO::getTrainId, trainId)
+                .eq(SeatDO::getSeatType, carriageType)
                 .eq(SeatDO::getStartStation, departure)
                 .eq(SeatDO::getEndStation, arrival)
-                .eq(SeatDO::getSeatType, seatType)
                 .eq(SeatDO::getSeatStatus, SeatStatusEnum.AVAILABLE.getCode())
                 .groupBy(SeatDO::getCarriageNumber)
                 .select(SeatDO::getCarriageNumber);
-        List<SeatDO> seatDOList = baseMapper.selectList(queryWrapper);
-        return seatDOList.stream().map(SeatDO::getCarriageNumber).toList();
-
+        List<SeatDO> seatDOList = seatMapper.selectList(queryWrapper);
+        return seatDOList.stream().map(SeatDO::getCarriageNumber).collect(Collectors.toList());
     }
 
 

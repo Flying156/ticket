@@ -2,6 +2,7 @@ package org.learn.index12306.biz.orderservice.controller;
 
 import cn.crane4j.annotation.AutoOperate;
 import lombok.RequiredArgsConstructor;
+import org.learn.index12306.biz.orderservice.dto.req.TicketOrderCreateReqDTO;
 import org.learn.index12306.biz.orderservice.dto.req.TicketOrderItemQueryReqDTO;
 import org.learn.index12306.biz.orderservice.dto.req.TicketOrderPageQueryReqDTO;
 import org.learn.index12306.biz.orderservice.dto.req.TicketOrderSelfPageQueryReqDTO;
@@ -13,10 +14,7 @@ import org.learn.index12306.biz.orderservice.service.OrderService;
 import org.learn.index12306.framework.starter.convention.page.PageResponse;
 import org.learn.index12306.framework.starter.convention.result.Result;
 import org.learn.index12306.framework.starter.web.Results;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -66,5 +64,13 @@ public class TicketOrderController {
     @GetMapping("/api/order-service/order/ticket/self/page")
     public Result<PageResponse<TicketOrderDetailSelfRespDTO>> pageSelfTicketOrder(TicketOrderSelfPageQueryReqDTO requestParam){
         return Results.success(orderService.pageSelfTicketOrder(requestParam));
+    }
+
+    /**
+     * 创建车票订单
+     */
+    @PostMapping("/api/order-service/order/ticket/create")
+    public Result<String> createTicketOrder(@RequestBody TicketOrderCreateReqDTO requestParam){
+        return Results.success(orderService.createTicketOrder(requestParam));
     }
 }
