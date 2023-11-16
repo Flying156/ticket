@@ -2,10 +2,7 @@ package org.learn.index12306.biz.orderservice.controller;
 
 import cn.crane4j.annotation.AutoOperate;
 import lombok.RequiredArgsConstructor;
-import org.learn.index12306.biz.orderservice.dto.req.TicketOrderCreateReqDTO;
-import org.learn.index12306.biz.orderservice.dto.req.TicketOrderItemQueryReqDTO;
-import org.learn.index12306.biz.orderservice.dto.req.TicketOrderPageQueryReqDTO;
-import org.learn.index12306.biz.orderservice.dto.req.TicketOrderSelfPageQueryReqDTO;
+import org.learn.index12306.biz.orderservice.dto.req.*;
 import org.learn.index12306.biz.orderservice.dto.resp.TicketOrderDetailRespDTO;
 import org.learn.index12306.biz.orderservice.dto.resp.TicketOrderDetailSelfRespDTO;
 import org.learn.index12306.biz.orderservice.dto.resp.TicketOrderPassengerDetailRespDTO;
@@ -73,4 +70,21 @@ public class TicketOrderController {
     public Result<String> createTicketOrder(@RequestBody TicketOrderCreateReqDTO requestParam){
         return Results.success(orderService.createTicketOrder(requestParam));
     }
+
+    /**
+     * 关闭订单
+     */
+    @PostMapping("/api/order-service/order/ticket/order")
+    public Result<Boolean> closeTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam){
+        return Results.success(orderService.closeTicketOrder(requestParam));
+    }
+
+    /**
+     * 车票订单取消
+     */
+    @PostMapping("/api/order-service/order/ticket/cancel")
+    public Result<Boolean> cancelTickOrder(@RequestBody CancelTicketOrderReqDTO requestParam) {
+        return Results.success(orderService.cancelTickOrder(requestParam));
+    }
+
 }

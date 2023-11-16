@@ -19,6 +19,7 @@
         <module name="index12306-ticket-service" />
         <module name="index12306-idempotent-spring-boot-starter" />
         <module name="index12306-web-spring-boot-starter" />
+        <module name="index12306-pay-servcice" />
         <module name="index12306-user-spring-boot-starter" />
         <module name="index12306-cache-spring-boot-starter" />
       </profile>

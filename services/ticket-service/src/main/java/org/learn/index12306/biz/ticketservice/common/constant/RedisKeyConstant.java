@@ -61,6 +61,12 @@ public final class RedisKeyConstant {
     public static final String TRAIN_STATION_STOPOVER_DETAIL = "index12306-ticket-service:train_station_stopover_detail:";
 
     /**
+     * 站点详细信息查询，Key Prefix + 列车ID_起始站点_终点
+     */
+    public static final String TRAIN_STATION_DETAIL = "index12306-ticket-service:train_station_detail:";
+
+
+    /**
      * 用户购票分布式锁 Key
      */
     public static final String LOCK_PURCHASE_TICKETS = "${unique-name:}index12306-ticket-service:lock:purchase_tickets_%s";
